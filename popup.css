@@ -1,0 +1,400 @@
+#ssh-popup {
+  position: fixed;
+  z-index: 2147483647;
+  display: none;
+  max-width: 680px;
+  min-width: 220px;
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #c3cbd4;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  font: 12px/1.45 "Splunk Platform Sans", "Proxima Nova", Helvetica, Arial, sans-serif;
+  padding: 0;
+  overflow: hidden;
+}
+
+#ssh-popup .ssh-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  background: #f2f4f5;
+  border-bottom: 1px solid #e1e6eb;
+}
+
+#ssh-popup .ssh-kind {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7785;
+}
+
+#ssh-popup .ssh-name {
+  font-family: "Roboto Mono", Consolas, Menlo, monospace;
+  font-weight: 600;
+  color: #21295c;
+}
+
+#ssh-popup .ssh-entry {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef1f4;
+}
+#ssh-popup .ssh-entry:last-child {
+  border-bottom: none;
+}
+
+#ssh-popup .ssh-app {
+  font-size: 11px;
+  color: #6b7785;
+  margin-bottom: 4px;
+}
+
+#ssh-popup .ssh-def {
+  margin: 0 0 6px;
+  padding: 6px 8px;
+  background: #f7f8fa;
+  border: 1px solid #e1e6eb;
+  border-radius: 3px;
+  font: 11px/1.5 "Roboto Mono", Consolas, Menlo, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 220px;
+  overflow: auto;
+  color: #333;
+}
+
+#ssh-popup .ssh-meta {
+  font-size: 11px;
+  color: #52616f;
+  margin-bottom: 6px;
+}
+
+#ssh-popup .ssh-err {
+  padding: 8px 10px;
+  color: #a94442;
+  font-size: 11px;
+}
+
+#ssh-popup .ssh-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 2px 0 7px;
+}
+
+#ssh-popup .ssh-field {
+  font: 10.5px/1.4 "Roboto Mono", Consolas, Menlo, monospace;
+  color: #21295c;
+  background: #eef3f6;
+  border: 1px solid #d5dfe6;
+  border-radius: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+#ssh-popup .ssh-field-more {
+  color: #6b7785;
+  background: transparent;
+  border-style: dashed;
+}
+
+#ssh-popup .ssh-field:not(.ssh-field-more) {
+  cursor: pointer;
+}
+#ssh-popup .ssh-field:not(.ssh-field-more):hover {
+  background: #dce8ee;
+}
+#ssh-popup .ssh-field.ssh-copied {
+  background: #dff0d8;
+  border-color: #b7d3a8;
+}
+
+/* Copy-field button in results table headers */
+th .ssh-copy {
+  cursor: pointer;
+  opacity: 0;
+  margin-left: 2px;
+  padding: 0 3px;
+  color: #6b7785;
+  line-height: 1;
+  transition: opacity 0.12s ease;
+}
+th:hover .ssh-copy {
+  opacity: 0.65;
+}
+th .ssh-copy:hover {
+  opacity: 1;
+  color: #1c7293;
+}
+th .ssh-copy.ssh-copied {
+  opacity: 1;
+  color: #2e7d32;
+}
+th .ssh-copy svg {
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+/* Events-table headers: the drag grip is a ::before welded to the label, so
+   the two can't be separated. Layout on hover: icon | grip | name — the icon
+   takes the leftmost slot and grip+name slide right together. Absolute
+   positioning so the icon never changes header height. */
+th.reorderable,
+th.col-time {
+  position: relative;
+}
+th.reorderable .ssh-copy,
+th.col-time .ssh-copy {
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 2px 3px;
+  line-height: 0;
+}
+th.reorderable .reorderable-label {
+  transition: margin-left 0.12s ease;
+}
+th.reorderable:hover .reorderable-label {
+  margin-left: 18px;
+}
+th.col-time:hover {
+  padding-left: 22px; /* plain text node, no label span to shift */
+}
+
+/* Inline copy button beside the field name in the field-info dialog */
+.ssh-copy-inline {
+  cursor: pointer;
+  margin-left: 7px;
+  color: #6b7785;
+  opacity: 0.55;
+  text-decoration: none;
+  transition: opacity 0.12s ease;
+}
+.ssh-copy-inline:hover {
+  opacity: 1;
+  color: #1c7293;
+  text-decoration: none;
+}
+.ssh-copy-inline.ssh-copied {
+  opacity: 1;
+  color: #2e7d32;
+}
+.ssh-copy-inline svg {
+  width: 13px;
+  height: 13px;
+  vertical-align: baseline;
+  pointer-events: none;
+}
+
+/* Copy icon before each value in the field-info dialog values table */
+.ssh-copy-value {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 6px;
+  color: #6b7785;
+  opacity: 0.55;
+  text-decoration: none;
+  line-height: 1;
+  transition: opacity 0.12s ease;
+}
+.table-field-values .ssh-copy-value:hover {
+  opacity: 1;
+  color: #1c7293;
+  text-decoration: none;
+}
+.table-field-values .ssh-copy-value.ssh-copied {
+  opacity: 1;
+  color: #2e7d32;
+}
+.ssh-copy-value svg {
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+/* Lookup clause builder */
+#ssh-popup .ssh-builder {
+  padding: 8px 12px 10px;
+  border-top: 1px solid #e1e6eb;
+  background: #fbfcfd;
+}
+#ssh-popup .ssh-b-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7785;
+  margin: 8px 0 4px;
+}
+#ssh-popup .ssh-b-title:first-child {
+  margin-top: 0;
+}
+
+/* Quiet inputs: borderless until interaction */
+#ssh-popup .ssh-builder select,
+#ssh-popup .ssh-builder input[type="text"] {
+  font: 11px "Roboto Mono", Consolas, Menlo, monospace;
+  color: #333;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom-color: #e1e6eb;
+  border-radius: 0;
+  padding: 2px 4px;
+  height: 22px;
+  box-sizing: border-box;
+}
+#ssh-popup .ssh-builder select {
+  border: 1px solid #d5dfe6;
+  border-radius: 3px;
+  background: #fff;
+}
+#ssh-popup .ssh-builder input[type="text"]:hover:not(:disabled),
+#ssh-popup .ssh-builder input[type="text"]:focus {
+  border-bottom-color: #1c7293;
+  outline: none;
+  background: #fff;
+}
+#ssh-popup .ssh-builder input[type="text"]::placeholder {
+  color: #b7c0c9;
+}
+#ssh-popup .ssh-builder input[type="text"]:disabled {
+  border-bottom-color: transparent;
+  color: #9aa5b0;
+  visibility: hidden;
+}
+
+/* Match rows */
+#ssh-popup .ssh-m-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+#ssh-popup .ssh-kw {
+  font-size: 10px;
+  color: #6b7785;
+  font-weight: 600;
+}
+#ssh-popup .ssh-m-field {
+  max-width: 170px;
+}
+#ssh-popup .ssh-m-as {
+  width: 130px;
+}
+#ssh-popup .ssh-m-sample {
+  width: 120px;
+  margin-left: 10px;
+}
+#ssh-popup .ssh-m-del {
+  color: #a94442;
+  text-decoration: none;
+  font-size: 11px;
+  padding: 0 3px;
+  opacity: 0.5;
+}
+#ssh-popup .ssh-m-del:hover {
+  opacity: 1;
+}
+#ssh-popup .ssh-m-add {
+  display: inline-block;
+  font-size: 11px;
+  color: #1c7293;
+  text-decoration: none;
+  margin: 2px 0 4px;
+}
+
+/* Output table */
+#ssh-popup .ssh-o-head,
+#ssh-popup .ssh-o-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 140px minmax(90px, 160px);
+  gap: 10px;
+  align-items: center;
+}
+#ssh-popup .ssh-o-head {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9aa5b0;
+  padding: 2px 0 3px;
+  border-bottom: 1px solid #eef1f4;
+  margin-bottom: 2px;
+}
+#ssh-popup .ssh-b-outputs {
+  max-height: 210px;
+  overflow-y: auto;
+}
+#ssh-popup .ssh-o-row {
+  padding: 1px 0;
+}
+#ssh-popup .ssh-o-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  cursor: pointer;
+}
+#ssh-popup .ssh-o-name {
+  font: 11px "Roboto Mono", Consolas, Menlo, monospace;
+  color: #21295c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#ssh-popup .ssh-o-sample {
+  font: 10.5px/1.5 "Roboto Mono", Consolas, Menlo, monospace;
+  color: #7a8794;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#ssh-popup .ssh-o-sample.ssh-nomatch {
+  color: #a94442;
+  font-style: italic;
+}
+#ssh-popup .ssh-o-off .ssh-o-name,
+#ssh-popup .ssh-o-off .ssh-o-sample {
+  opacity: 0.45;
+}
+#ssh-popup .ssh-out-kw {
+  margin-left: 6px;
+  text-transform: none;
+}
+#ssh-popup .ssh-b-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+}
+#ssh-popup .ssh-b-status {
+  font-size: 11px;
+}
+#ssh-popup .ssh-b-ok {
+  color: #2e7d32;
+}
+#ssh-popup .ssh-b-err {
+  color: #a94442;
+}
+
+/* Two-column variant (explorer: Field | Sample) */
+#ssh-popup .ssh-2col {
+  grid-template-columns: minmax(120px, 1fr) minmax(120px, 240px);
+}
+
+/* Sample cells: click to copy the full value */
+#ssh-popup .ssh-o-sample:not(:empty):not(.ssh-nomatch) {
+  cursor: pointer;
+}
+#ssh-popup .ssh-o-sample:not(:empty):not(.ssh-nomatch):hover {
+  color: #1c7293;
+  background: #eef3f6;
+  border-radius: 3px;
+}
+#ssh-popup .ssh-o-sample.ssh-copied {
+  color: #2e7d32 !important;
+  background: #dff0d8 !important;
+  border-radius: 3px;
+}

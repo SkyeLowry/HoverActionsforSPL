@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hover Actions for SPL — Settings</title>
+<style>
+  :root {
+    --deep: #065A82; --teal: #1C7293; --midnight: #21295C; --amber: #E8A33D;
+  }
+  body {
+    font: 14px/1.5 "Splunk Platform Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #2b3640; background: #f7f9fa; margin: 0; padding: 32px 16px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 20px; color: var(--midnight); margin: 0 0 2px; }
+  .version { color: #8a95a1; font-size: 12px; margin-bottom: 18px; }
+  .card {
+    background: #fff; border: 1px solid #dde4e9; border-radius: 6px;
+    padding: 16px 20px; margin-bottom: 16px;
+  }
+  h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--teal); margin: 0 0 10px;
+  }
+  p { margin: 0 0 8px; }
+  ul { margin: 4px 0 8px; padding-left: 20px; }
+  li { margin-bottom: 3px; }
+  code {
+    font: 12px "Roboto Mono", Consolas, monospace;
+    background: #eef3f6; border-radius: 3px; padding: 0 4px; color: var(--midnight);
+  }
+  .toggle-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #eef1f4;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-row input[type="checkbox"] {
+    margin-top: 3px; width: 16px; height: 16px; accent-color: var(--teal);
+    flex-shrink: 0; cursor: pointer;
+  }
+  .toggle-label { cursor: pointer; }
+  .toggle-name { font-weight: 600; color: var(--midnight); }
+  .toggle-desc { color: #5c6873; font-size: 12.5px; }
+  .note {
+    border-left: 3px solid var(--amber); background: #fdf6ea;
+    padding: 8px 12px; font-size: 12.5px; color: #6b5a34; border-radius: 0 4px 4px 0;
+  }
+  #saved {
+    color: #2e7d32; font-size: 12px; margin-left: 8px;
+    opacity: 0; transition: opacity .2s ease;
+  }
+  #saved.show { opacity: 1; }
+  footer { color: #9aa5b0; font-size: 11.5px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hover Actions for SPL</h1>
+  <div class="version">v<span id="version"></span> · runs on <code>*.splunkcloud.com</code></div>
+
+  <div class="card">
+    <h2>What this extension does</h2>
+    <p>Adds hover actions and copy shortcuts to Splunk Web. Everything runs
+    against your existing Splunk session — same-origin REST reads, no external
+    hosts, no data stored outside this browser.</p>
+    <ul>
+      <li><b>Macro hovers</b> — hover a <code>`macro`</code> in the search bar
+        to see its full definition and jump to the definition page.</li>
+      <li><b>Lookup hovers</b> — hover a lookup file or definition to see the
+        owning app, fields, sample data, and edit links.</li>
+      <li><b>Lookup clause builder</b> — on <code>| lookup</code> hovers,
+        edit match fields, aliases, and OUTPUT selection, then apply the
+        rewritten clause back into the search.</li>
+      <li><b>Live preview</b> — type a value against a match field to preview
+        the row that lookup would return.</li>
+      <li><b>Copy icons</b> — one-click copy of field names and values across
+        results tables and dialogs (full list below).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Features <span id="saved">saved ✓</span></h2>
+    <div class="toggle-row">
+      <input type="checkbox" id="hoverMacros">
+      <label class="toggle-label" for="hoverMacros">
+        <div class="toggle-name">Macro hover popups</div>
+        <div class="toggle-desc">Definition preview and edit link on backtick macros in the search bar.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="hoverLookups">
+      <label class="toggle-label" for="hoverLookups">
+        <div class="toggle-name">Lookup hover popups</div>
+        <div class="toggle-desc">App resolution, edit links, clause builder and sample explorer for
+          <code>lookup</code> / <code>inputlookup</code> / <code>outputlookup</code> references.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="lookupSamples">
+      <label class="toggle-label" for="lookupSamples">
+        <div class="toggle-name">Sample data &amp; live preview</div>
+        <div class="toggle-desc">Fetches lookup fields and a sample row, and runs preview queries as you
+          type. <b>This is the only feature that dispatches searches</b> (oneshot
+          <code>| inputlookup … | head 1</code>) under your account. Off = passive REST reads only;
+          the builder and explorer are hidden.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyStatHeaders">
+      <label class="toggle-label" for="copyStatHeaders">
+        <div class="toggle-name">Copy icons — Statistics &amp; dashboard tables</div>
+        <div class="toggle-desc">Field-name copy button in sortable results-table headers.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyEventHeaders">
+      <label class="toggle-label" for="copyEventHeaders">
+        <div class="toggle-name">Copy icons — Events table (View: Table)</div>
+        <div class="toggle-desc">Field-name copy button in events-table column headers.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyFieldDialog">
+      <label class="toggle-label" for="copyFieldDialog">
+        <div class="toggle-name">Copy icons — field info dialog</div>
+        <div class="toggle-desc">Copy buttons on the field name and each listed value in the sidebar
+          field popup.</div>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Where copy icons appear</h2>
+    <ul>
+      <li>Statistics tab and dashboard table headers (copies the field name)</li>
+      <li>Events tab, View: Table column headers, including <code>_time</code> (field name)</li>
+      <li>Field info dialog title (field name)</li>
+      <li>Field info dialog values list (copies the raw value, even when the display is truncated)</li>
+      <li>Field chips in lookup hover popups (field name)</li>
+    </ul>
+    <div class="note">Copied values are raw data from your events and lookups and can include
+      sensitive information (account numbers, personal identifiers). The clipboard is yours —
+      treat pastes accordingly.</div>
+  </div>
+
+  <footer>Settings sync with your Chrome profile and apply immediately to open Splunk tabs.</footer>
+</div>
+<script src="options.js"></script>
+</body>
+</html>
