@@ -38,12 +38,16 @@ for a passive, read-only mode.
 1. Clone this repository
 2. Open `chrome://extensions`, enable **Developer mode**
 3. **Load unpacked** → select the repository folder
+4. The options page opens — add your Splunk domain (the extension has no
+   host access until you do)
 
 **From the Chrome Web Store:** _link pending review_
 
 ## Privacy
 
-No data collection, no external hosts, no telemetry. All requests are
+No data collection, no external hosts, no telemetry, and **no host access by
+default** — you grant permission for your own Splunk domain(s) from the
+options page, and the extension runs nowhere else. All requests are
 same-origin calls to your own Splunk instance on your existing session.
 See [PRIVACY.md](PRIVACY.md).
 
@@ -60,12 +64,14 @@ Built and tested against Splunk Cloud. Known variance between stacks:
 
 ## Architecture
 
+- `background.js` (service worker) — registers content scripts dynamically
+  for exactly the domains you've granted, and keeps registrations in sync.
 - `page-agent.js` (MAIN world) — talks to the Ace editor instance directly:
   converts mouse position to document coordinates, tokenizes SPL, applies
   clause rewrites with a stale-text guard.
 - `content.js` (isolated world) — popup UI, REST resolution, clipboard,
   settings.
-- No background service worker; `storage` is the only Chrome permission.
+- Permissions: `storage` (settings), `scripting` (dynamic registration); host access is optional and user-granted per domain.
 
 ## Issues & contributions
 

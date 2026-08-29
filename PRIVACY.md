@@ -30,9 +30,12 @@ stored.
 icon) and write to your own clipboard only.
 
 **Permissions:**
-- `storage` — persist the feature toggles above.
-- `https://*.splunkcloud.com/*` — run on Splunk Cloud pages. The wildcard is
-  required because every Splunk Cloud customer has a different subdomain.
+- `storage` — persist the feature toggles and your domain list.
+- `scripting` — register the extension's content scripts for the domains you
+  add.
+- Host access is **optional and user-granted**: the extension has no access
+  to any website until you add your own Splunk domain on the options page,
+  and it runs only on the domains you have added.
 
 ## Changes
 
