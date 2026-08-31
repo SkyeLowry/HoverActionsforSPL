@@ -3,10 +3,17 @@
 const DEFAULTS = {
   hoverMacros: true,
   hoverLookups: true,
+  hoverSavedSearches: true,
+  hoverIndexes: true,
+  hoverDatamodels: true,
+  markUnknown: true,
   lookupSamples: true,
   copyStatHeaders: true,
   copyEventHeaders: true,
   copyFieldDialog: true,
+  copyEventActions: true,
+  copyDrilldownPair: true,
+  copyTable: true,
 };
 
 document.getElementById("version").textContent =
@@ -25,14 +32,31 @@ function flashSaved() {
   savedTimer = setTimeout(() => savedEl.classList.remove("show"), 1200);
 }
 
+// A setting that only has an effect while another one is on. The stored value
+// is left alone — switching the parent back on restores whatever was chosen.
+const DEPENDS_ON = {
+  lookupSamples: "hoverLookups",
+};
+
+function applyDependencies() {
+  for (const [child, parent] of Object.entries(DEPENDS_ON)) {
+    const on = document.getElementById(parent).checked;
+    const box = document.getElementById(child);
+    box.disabled = !on;
+    box.closest(".toggle-row").classList.toggle("is-disabled", !on);
+  }
+}
+
 chrome.storage.sync.get(DEFAULTS, (settings) => {
   for (const key of Object.keys(DEFAULTS)) {
     const box = document.getElementById(key);
     box.checked = settings[key];
     box.addEventListener("change", () => {
       chrome.storage.sync.set({ [key]: box.checked }, flashSaved);
+      applyDependencies();
     });
   }
+  applyDependencies();
 });
 
 // ---------------------------------------------------------------------------
@@ -44,14 +68,34 @@ const domainAdd = document.getElementById("domainAdd");
 const domainErr = document.getElementById("domainErr");
 const domainList = document.getElementById("domainList");
 
+const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
+
 function normalizeDomain(raw) {
   let s = raw.trim().toLowerCase();
   // Accept a pasted URL and reduce it to the host.
   s = s.replace(/^[a-z]+:\/\//, "").split("/")[0].split(":")[0];
-  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(s)) {
-    return null;
-  }
-  return s;
+
+  // A leading "*." covers every subdomain — the only wildcard Chrome's match
+  // patterns accept, and what lets one entry serve a whole estate of stacks.
+  // Chrome matches the bare domain as well as its subdomains.
+  const wildcard = s.startsWith("*.");
+  if (wildcard) s = s.slice(2);
+
+  if (!HOST_RE.test(s)) return null;
+  // HOST_RE already demands two labels, so "*.com" can't get through here.
+  return wildcard ? `*.${s}` : s;
+}
+
+// Does an existing entry already cover this host?
+function coveredBy(domains, host) {
+  if (host.startsWith("*.")) return null;
+  return (
+    domains.find(
+      (d) =>
+        d.startsWith("*.") &&
+        (host === d.slice(2) || host.endsWith(d.slice(1)))
+    ) || null
+  );
 }
 
 async function getDomains() {
@@ -93,6 +137,11 @@ async function addDomain() {
   const domains = await getDomains();
   if (domains.includes(host)) {
     domainErr.textContent = "Already added.";
+    return;
+  }
+  const cover = coveredBy(domains, host);
+  if (cover) {
+    domainErr.textContent = `Already covered by ${cover}.`;
     return;
   }
   let granted = false;

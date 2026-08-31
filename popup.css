@@ -1,14 +1,71 @@
+/* Theme tokens. The popup is ours, but it sits on a Splunk page that may be
+   light or dark; content.js sets .ssh-dark from the page's own background
+   luminance rather than guessing at a Splunk theme class. */
+#ssh-popup {
+  --ssh-bg: #ffffff;
+  --ssh-head-bg: #f2f4f5;
+  --ssh-panel-bg: #fbfcfd;
+  --ssh-code-bg: #f7f8fa;
+  --ssh-fg: #333;
+  --ssh-border: #c3cbd4;
+  --ssh-border-soft: #e1e6eb;
+  --ssh-border-faint: #eef1f4;
+  --ssh-muted: #6b7785;
+  --ssh-meta: #52616f;
+  --ssh-dim: #9aa5b0;
+  --ssh-accent-text: #21295c;
+  --ssh-chip-bg: #eef3f6;
+  --ssh-chip-border: #d5dfe6;
+  --ssh-chip-hover: #dce8ee;
+  --ssh-ok-bg: #dff0d8;
+  --ssh-ok-border: #b7d3a8;
+  --ssh-ok: #2e7d32;
+  --ssh-err: #a94442;
+  --ssh-link: #1c7293;
+  --ssh-warn: #8a6d3b;
+  --ssh-warn-bg: #fcf8e3;
+  --ssh-sub-bg: #cfe6f2;
+  --ssh-shadow: rgba(0, 0, 0, 0.18);
+}
+
+#ssh-popup.ssh-dark {
+  --ssh-bg: #1f2226;
+  --ssh-head-bg: #2a2e34;
+  --ssh-panel-bg: #22262b;
+  --ssh-code-bg: #16191d;
+  --ssh-fg: #d6dae0;
+  --ssh-border: #464d56;
+  --ssh-border-soft: #343a41;
+  --ssh-border-faint: #2e343a;
+  --ssh-muted: #98a3af;
+  --ssh-meta: #b3bcc6;
+  --ssh-dim: #7d8894;
+  --ssh-accent-text: #c6cff0;
+  --ssh-chip-bg: #2b3138;
+  --ssh-chip-border: #3c434c;
+  --ssh-chip-hover: #38414b;
+  --ssh-ok-bg: #24422a;
+  --ssh-ok-border: #3a6b45;
+  --ssh-ok: #86c98a;
+  --ssh-err: #ef8b88;
+  --ssh-link: #6ab7de;
+  --ssh-warn: #e6c07b;
+  --ssh-warn-bg: #3a3320;
+  --ssh-sub-bg: #2c4a5c;
+  --ssh-shadow: rgba(0, 0, 0, 0.55);
+}
+
 #ssh-popup {
   position: fixed;
   z-index: 2147483647;
   display: none;
   max-width: 680px;
   min-width: 220px;
-  background: #ffffff;
-  color: #333;
-  border: 1px solid #c3cbd4;
+  background: var(--ssh-bg);
+  color: var(--ssh-fg);
+  border: 1px solid var(--ssh-border);
   border-radius: 4px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 14px var(--ssh-shadow);
   font: 12px/1.45 "Splunk Platform Sans", "Proxima Nova", Helvetica, Arial, sans-serif;
   padding: 0;
   overflow: hidden;
@@ -19,26 +76,26 @@
   align-items: baseline;
   gap: 8px;
   padding: 7px 10px;
-  background: #f2f4f5;
-  border-bottom: 1px solid #e1e6eb;
+  background: var(--ssh-head-bg);
+  border-bottom: 1px solid var(--ssh-border-soft);
 }
 
 #ssh-popup .ssh-kind {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6b7785;
+  color: var(--ssh-muted);
 }
 
 #ssh-popup .ssh-name {
   font-family: "Roboto Mono", Consolas, Menlo, monospace;
   font-weight: 600;
-  color: #21295c;
+  color: var(--ssh-accent-text);
 }
 
 #ssh-popup .ssh-entry {
   padding: 8px 10px;
-  border-bottom: 1px solid #eef1f4;
+  border-bottom: 1px solid var(--ssh-border-faint);
 }
 #ssh-popup .ssh-entry:last-child {
   border-bottom: none;
@@ -46,33 +103,55 @@
 
 #ssh-popup .ssh-app {
   font-size: 11px;
-  color: #6b7785;
+  color: var(--ssh-muted);
   margin-bottom: 4px;
 }
 
 #ssh-popup .ssh-def {
   margin: 0 0 6px;
   padding: 6px 8px;
-  background: #f7f8fa;
-  border: 1px solid #e1e6eb;
+  background: var(--ssh-code-bg);
+  border: 1px solid var(--ssh-border-soft);
   border-radius: 3px;
   font: 11px/1.5 "Roboto Mono", Consolas, Menlo, monospace;
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 220px;
   overflow: auto;
-  color: #333;
+  color: var(--ssh-fg);
+}
+
+/* A macro argument substituted into the definition — marked so it's obvious
+   which parts came from the call site rather than the stored definition. */
+#ssh-popup .ssh-sub {
+  background: var(--ssh-sub-bg);
+  border-radius: 2px;
+  padding: 0 2px;
 }
 
 #ssh-popup .ssh-meta {
   font-size: 11px;
-  color: #52616f;
+  color: var(--ssh-meta);
   margin-bottom: 6px;
+}
+
+#ssh-popup .ssh-warn {
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--ssh-warn);
+  background: var(--ssh-warn-bg);
+  border-bottom: 1px solid var(--ssh-border-soft);
+}
+
+#ssh-popup .ssh-ok {
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--ssh-ok);
 }
 
 #ssh-popup .ssh-err {
   padding: 8px 10px;
-  color: #a94442;
+  color: var(--ssh-err);
   font-size: 11px;
 }
 
@@ -85,90 +164,131 @@
 
 #ssh-popup .ssh-field {
   font: 10.5px/1.4 "Roboto Mono", Consolas, Menlo, monospace;
-  color: #21295c;
-  background: #eef3f6;
-  border: 1px solid #d5dfe6;
+  color: var(--ssh-accent-text);
+  background: var(--ssh-chip-bg);
+  border: 1px solid var(--ssh-chip-border);
   border-radius: 3px;
   padding: 1px 6px;
   white-space: nowrap;
 }
 
 #ssh-popup .ssh-field-more {
-  color: #6b7785;
+  color: var(--ssh-muted);
   background: transparent;
   border-style: dashed;
+  cursor: pointer;
+}
+#ssh-popup .ssh-field-more:hover,
+#ssh-popup .ssh-field-more:focus {
+  color: var(--ssh-link);
+  border-color: var(--ssh-link);
+  border-style: solid;
+  outline: none;
+}
+#ssh-popup .ssh-field-hidden {
+  display: none;
 }
 
 #ssh-popup .ssh-field:not(.ssh-field-more) {
   cursor: pointer;
 }
 #ssh-popup .ssh-field:not(.ssh-field-more):hover {
-  background: #dce8ee;
+  background: var(--ssh-chip-hover);
 }
 #ssh-popup .ssh-field.ssh-copied {
-  background: #dff0d8;
-  border-color: #b7d3a8;
+  background: var(--ssh-ok-bg);
+  border-color: var(--ssh-ok-border);
 }
 
-/* Copy-field button in results table headers */
-th .ssh-copy {
+/* Statistics / dashboard headers: the field name is the copy target. No
+   element is added, so the header can't grow or reflow. Explicit colours on
+   the flash so it reads on both the light and dark Splunk themes. */
+th .ssh-hdr,
+.ssh-pair {
   cursor: pointer;
-  opacity: 0;
-  margin-left: 2px;
-  padding: 0 3px;
-  color: #6b7785;
-  line-height: 1;
-  transition: opacity 0.12s ease;
+  border-radius: 2px;
+  transition: background 0.12s ease;
 }
-th:hover .ssh-copy {
-  opacity: 0.65;
+th .ssh-hdr:hover,
+.ssh-pair:hover {
+  background: rgba(28, 114, 147, 0.16);
 }
-th .ssh-copy:hover {
-  opacity: 1;
-  color: #1c7293;
-}
-th .ssh-copy.ssh-copied {
-  opacity: 1;
+th .ssh-hdr.ssh-copied,
+.ssh-pair.ssh-copied {
+  background: #dff0d8;
   color: #2e7d32;
 }
-th .ssh-copy svg {
-  vertical-align: middle;
-  pointer-events: none;
+
+/* Entries we append to a cell menu. Inside Splunk's own .dropdown-menu these
+   are <li> and inherit its styling; in the Statistics drilldown popup they are
+   <div> and need enough of their own to read as menu rows. Colours are
+   inherited so both themes work. */
+div.ssh-menu-item {
+  border-top: 1px solid rgba(127, 135, 145, 0.25);
+}
+div.ssh-menu-item > a {
+  display: block;
+  padding: 6px 12px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+div.ssh-menu-item > a:hover {
+  background: rgba(28, 114, 147, 0.2);
+  text-decoration: none;
 }
 
-/* Events-table headers: the drag grip is a ::before welded to the label, so
-   the two can't be separated. Layout on hover: icon | grip | name — the icon
-   takes the leftmost slot and grip+name slide right together. Absolute
-   positioning so the icon never changes header height. */
-th.reorderable,
-th.col-time {
-  position: relative;
+/* Copy-table control (dashboards). On the search page the same menu hangs
+   off Splunk's own export button instead. Colours are inherited or sampled
+   from the page so it sits in the light and dark themes alike. */
+.ssh-tblbar {
+  text-align: right;
+  padding: 2px 0;
 }
-th.reorderable .ssh-copy,
-th.col-time .ssh-copy {
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  padding: 2px 3px;
-  line-height: 0;
+.ssh-tblcopy-btn {
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 2px 9px;
+  cursor: pointer;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(127, 135, 145, 0.5);
+  border-radius: 3px;
+  opacity: 0.85;
 }
-th.reorderable .reorderable-label {
-  transition: margin-left 0.12s ease;
+.ssh-tblcopy-btn:hover {
+  opacity: 1;
+  border-color: rgba(127, 135, 145, 0.9);
 }
-th.reorderable:hover .reorderable-label {
-  margin-left: 18px;
+.ssh-tblcopy-menu {
+  position: fixed;
+  transform: translateX(-100%); /* right-aligned to the button */
+  z-index: 2147483000;
+  min-width: 150px;
+  padding: 3px 0;
+  border: 1px solid rgba(127, 135, 145, 0.5);
+  border-radius: 3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
 }
-th.col-time:hover {
-  padding-left: 22px; /* plain text node, no label span to shift */
+.ssh-tblcopy-menu a {
+  display: block;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ssh-tblcopy-menu a:hover {
+  background: rgba(28, 114, 147, 0.22);
 }
 
 /* Inline copy button beside the field name in the field-info dialog */
 .ssh-copy-inline {
   cursor: pointer;
   margin-left: 7px;
-  color: #6b7785;
+  color: inherit;
   opacity: 0.55;
   text-decoration: none;
   transition: opacity 0.12s ease;
@@ -180,7 +300,7 @@ th.col-time:hover {
 }
 .ssh-copy-inline.ssh-copied {
   opacity: 1;
-  color: #2e7d32;
+  color: #45a049;
 }
 .ssh-copy-inline svg {
   width: 13px;
@@ -194,7 +314,7 @@ th.col-time:hover {
   cursor: pointer;
   display: inline-block;
   margin-right: 6px;
-  color: #6b7785;
+  color: inherit;
   opacity: 0.55;
   text-decoration: none;
   line-height: 1;
@@ -207,7 +327,7 @@ th.col-time:hover {
 }
 .table-field-values .ssh-copy-value.ssh-copied {
   opacity: 1;
-  color: #2e7d32;
+  color: #45a049;
 }
 .ssh-copy-value svg {
   vertical-align: middle;
@@ -216,15 +336,16 @@ th.col-time:hover {
 
 /* Lookup clause builder */
 #ssh-popup .ssh-builder {
+  min-width: 470px; /* three columns need room before they start colliding */
   padding: 8px 12px 10px;
-  border-top: 1px solid #e1e6eb;
-  background: #fbfcfd;
+  border-top: 1px solid var(--ssh-border-soft);
+  background: var(--ssh-panel-bg);
 }
 #ssh-popup .ssh-b-title {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6b7785;
+  color: var(--ssh-muted);
   margin: 8px 0 4px;
 }
 #ssh-popup .ssh-b-title:first-child {
@@ -235,32 +356,32 @@ th.col-time:hover {
 #ssh-popup .ssh-builder select,
 #ssh-popup .ssh-builder input[type="text"] {
   font: 11px "Roboto Mono", Consolas, Menlo, monospace;
-  color: #333;
+  color: var(--ssh-fg);
   background: transparent;
   border: 1px solid transparent;
-  border-bottom-color: #e1e6eb;
+  border-bottom-color: var(--ssh-border-soft);
   border-radius: 0;
   padding: 2px 4px;
   height: 22px;
   box-sizing: border-box;
 }
 #ssh-popup .ssh-builder select {
-  border: 1px solid #d5dfe6;
+  border: 1px solid var(--ssh-chip-border);
   border-radius: 3px;
-  background: #fff;
+  background: var(--ssh-bg);
 }
 #ssh-popup .ssh-builder input[type="text"]:hover:not(:disabled),
 #ssh-popup .ssh-builder input[type="text"]:focus {
-  border-bottom-color: #1c7293;
+  border-bottom-color: var(--ssh-link);
   outline: none;
-  background: #fff;
+  background: var(--ssh-bg);
 }
 #ssh-popup .ssh-builder input[type="text"]::placeholder {
-  color: #b7c0c9;
+  color: var(--ssh-dim);
 }
 #ssh-popup .ssh-builder input[type="text"]:disabled {
   border-bottom-color: transparent;
-  color: #9aa5b0;
+  color: var(--ssh-dim);
   visibility: hidden;
 }
 
@@ -273,7 +394,7 @@ th.col-time:hover {
 }
 #ssh-popup .ssh-kw {
   font-size: 10px;
-  color: #6b7785;
+  color: var(--ssh-muted);
   font-weight: 600;
 }
 #ssh-popup .ssh-m-field {
@@ -287,7 +408,7 @@ th.col-time:hover {
   margin-left: 10px;
 }
 #ssh-popup .ssh-m-del {
-  color: #a94442;
+  color: var(--ssh-err);
   text-decoration: none;
   font-size: 11px;
   padding: 0 3px;
@@ -299,7 +420,7 @@ th.col-time:hover {
 #ssh-popup .ssh-m-add {
   display: inline-block;
   font-size: 11px;
-  color: #1c7293;
+  color: var(--ssh-link);
   text-decoration: none;
   margin: 2px 0 4px;
 }
@@ -308,22 +429,32 @@ th.col-time:hover {
 #ssh-popup .ssh-o-head,
 #ssh-popup .ssh-o-row {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 140px minmax(90px, 160px);
-  gap: 10px;
+  grid-template-columns: minmax(110px, 1fr) minmax(110px, 150px) minmax(110px, 170px);
+  gap: 16px;
   align-items: center;
+}
+/* Grid children default to min-content width, so a text input with no width
+   of its own overflows into the next column. Both guards are needed. */
+#ssh-popup .ssh-o-head > *,
+#ssh-popup .ssh-o-row > * {
+  min-width: 0;
+}
+#ssh-popup .ssh-o-as {
+  width: 100%;
 }
 #ssh-popup .ssh-o-head {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #9aa5b0;
+  color: var(--ssh-dim);
   padding: 2px 0 3px;
-  border-bottom: 1px solid #eef1f4;
+  border-bottom: 1px solid var(--ssh-border-faint);
   margin-bottom: 2px;
 }
 #ssh-popup .ssh-b-outputs {
   max-height: 210px;
   overflow-y: auto;
+  padding-right: 6px; /* clear of the scrollbar */
 }
 #ssh-popup .ssh-o-row {
   padding: 1px 0;
@@ -338,21 +469,21 @@ th.col-time:hover {
 }
 #ssh-popup .ssh-o-name {
   font: 11px "Roboto Mono", Consolas, Menlo, monospace;
-  color: #21295c;
+  color: var(--ssh-accent-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 #ssh-popup .ssh-o-sample {
   font: 10.5px/1.5 "Roboto Mono", Consolas, Menlo, monospace;
-  color: #7a8794;
+  color: var(--ssh-dim);
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 #ssh-popup .ssh-o-sample.ssh-nomatch {
-  color: #a94442;
+  color: var(--ssh-err);
   font-style: italic;
 }
 #ssh-popup .ssh-o-off .ssh-o-name,
@@ -373,13 +504,14 @@ th.col-time:hover {
   font-size: 11px;
 }
 #ssh-popup .ssh-b-ok {
-  color: #2e7d32;
+  color: var(--ssh-ok);
 }
 #ssh-popup .ssh-b-err {
-  color: #a94442;
+  color: var(--ssh-err);
 }
 
-/* Two-column variant (explorer: Field | Sample) */
+/* Two-column variant — the explorer (Field | Sample), and the builder with
+   sampling turned off (Field | AS). */
 #ssh-popup .ssh-2col {
   grid-template-columns: minmax(120px, 1fr) minmax(120px, 240px);
 }
@@ -389,12 +521,24 @@ th.col-time:hover {
   cursor: pointer;
 }
 #ssh-popup .ssh-o-sample:not(:empty):not(.ssh-nomatch):hover {
-  color: #1c7293;
-  background: #eef3f6;
+  color: var(--ssh-link);
+  background: var(--ssh-chip-bg);
   border-radius: 3px;
 }
 #ssh-popup .ssh-o-sample.ssh-copied {
-  color: #2e7d32 !important;
-  background: #dff0d8 !important;
+  color: var(--ssh-ok) !important;
+  background: var(--ssh-ok-bg) !important;
   border-radius: 3px;
+}
+
+/* Unknown macro / lookup / index / report, marked in the search bar. Drawn in
+   Ace's marker layer, which sits behind the text — a dotted underline reads as
+   a hint, not an error, and never obscures what was typed. */
+/* The div carries its own inline position/size from markerRenderer, so this
+   rule must not touch geometry — only how the underline looks. */
+.ace_marker-layer .ssh-bad-token,
+.ssh-bad-token {
+  border-bottom: 2px dotted #d9534f;
+  box-sizing: border-box;
+  pointer-events: none;
 }

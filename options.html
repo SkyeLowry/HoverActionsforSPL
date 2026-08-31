@@ -39,8 +39,15 @@
     flex-shrink: 0; cursor: pointer;
   }
   .toggle-label { cursor: pointer; }
+  .toggle-row.is-disabled { opacity: .45; }
+  .toggle-row.is-disabled .toggle-label,
+  .toggle-row.is-disabled input { cursor: default; }
   .toggle-name { font-weight: 600; color: var(--midnight); }
   .toggle-desc { color: #5c6873; font-size: 12.5px; }
+  .card > p { color: #46525e; max-width: 68ch; }
+  .card > p.muted { color: #6b7785; font-size: 12.5px; }
+  .card > ul { color: #46525e; max-width: 68ch; margin-bottom: 14px; }
+  .card > ul li { margin-bottom: 6px; }
   .note {
     border-left: 3px solid var(--amber); background: #fdf6ea;
     padding: 8px 12px; font-size: 12.5px; color: #6b5a34; border-radius: 0 4px 4px 0;
@@ -81,106 +88,186 @@
 <body>
 <div class="wrap">
   <h1>Hover Actions for SPL</h1>
-  <div class="version">v<span id="version"></span> · runs only on the Splunk domains you add below</div>
+  <div class="version">v<span id="version"></span> · runs only on the Splunk domains you add below<span id="saved">saved ✓</span></div>
 
   <div class="card">
     <h2>Splunk domains</h2>
     <p>The extension has <b>no access to any website</b> until you add your
     Splunk Web domain here. Adding one asks Chrome for permission for that
     domain only.</p>
+    <p class="muted">Have several stacks? Add <code>*.splunkcloud.com</code> once instead of
+    each host &mdash; a leading <code>*.</code> covers every subdomain, so
+    <code>vancity.splunkcloud.com</code> and <code>es.vancity.splunkcloud.com</code> are both
+    included. Chrome will ask you to allow all sites on that domain.</p>
     <div class="domain-add">
-      <input type="text" id="domainInput" placeholder="acme.splunkcloud.com" spellcheck="false">
+      <input type="text" id="domainInput" placeholder="*.splunkcloud.com  or  acme.splunkcloud.com" spellcheck="false">
       <button id="domainAdd">Add</button>
       <span id="domainErr"></span>
     </div>
     <ul id="domainList" class="domain-list"></ul>
-    <div class="toggle-desc">Works with Splunk Cloud (<code>yourstack.splunkcloud.com</code>)
-      and self-hosted Splunk Web domains. Reload any open Splunk tabs after adding.</div>
+    <div class="toggle-desc">Works with Splunk Cloud and self-hosted Splunk Web domains.
+      Reload any open Splunk tabs after adding.</div>
   </div>
 
   <div class="card">
-    <h2>What this extension does</h2>
-    <p>Adds hover actions and copy shortcuts to Splunk Web. Everything runs
-    against your existing Splunk session — same-origin REST reads, no external
-    hosts, no data stored outside this browser.</p>
-    <ul>
-      <li><b>Macro hovers</b> — hover a <code>`macro`</code> in the search bar
-        to see its full definition and jump to the definition page.</li>
-      <li><b>Lookup hovers</b> — hover a lookup file or definition to see the
-        owning app, fields, sample data, and edit links.</li>
-      <li><b>Lookup clause builder</b> — on <code>| lookup</code> hovers,
-        edit match fields, aliases, and OUTPUT selection, then apply the
-        rewritten clause back into the search.</li>
-      <li><b>Live preview</b> — type a value against a match field to preview
-        the row that lookup would return.</li>
-      <li><b>Copy icons</b> — one-click copy of field names and values across
-        results tables and dialogs (full list below).</li>
-    </ul>
+    <h2>How it works</h2>
+    <p>Everything runs against your existing Splunk session — same-origin REST reads,
+    no external hosts, nothing stored outside this browser. The four groups below are
+    the whole extension; each setting applies to open tabs immediately.</p>
+    <p class="muted">Only one feature ever dispatches a search (<b>Sample data &amp; live preview</b>,
+    in Lookup tools). Everything else either reads configuration or reads the page you
+    are already looking at.</p>
   </div>
 
   <div class="card">
-    <h2>Features <span id="saved">saved ✓</span></h2>
+    <h2>1 · Search bar</h2>
+    <p>Hover any of these in the search box to see what it is actually doing, without
+    leaving the page.</p>
     <div class="toggle-row">
       <input type="checkbox" id="hoverMacros">
       <label class="toggle-label" for="hoverMacros">
-        <div class="toggle-name">Macro hover popups</div>
-        <div class="toggle-desc">Definition preview and edit link on backtick macros in the search bar.</div>
+        <div class="toggle-name">Macros</div>
+        <div class="toggle-desc">The full definition of a <code>`macro`</code> with this call's arguments
+          filled in, a link to its definition page, and <b>Copy expanded</b> for the whole thing with
+          nested macros resolved.</div>
       </label>
     </div>
     <div class="toggle-row">
+      <input type="checkbox" id="hoverSavedSearches">
+      <label class="toggle-label" for="hoverSavedSearches">
+        <div class="toggle-name">Saved searches &amp; reports</div>
+        <div class="toggle-desc">The SPL behind a <code>savedsearch</code> name, its owner, app, schedule
+          and next run, with a link to the report.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="hoverIndexes">
+      <label class="toggle-label" for="hoverIndexes">
+        <div class="toggle-name">Indexes</div>
+        <div class="toggle-desc">Event count, size and the earliest/latest event behind
+          <code>index=&lt;name&gt;</code> &mdash; and a plain "no such index" before you run the search.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="hoverDatamodels">
+      <label class="toggle-label" for="hoverDatamodels">
+        <div class="toggle-name">Data models</div>
+        <div class="toggle-desc">Datasets, fields and acceleration state behind
+          <code>datamodel=Foo.Bar</code> or <code>| datamodel Foo Bar</code> &mdash; useful when writing
+          <code>tstats</code>.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="markUnknown">
+      <label class="toggle-label" for="markUnknown">
+        <div class="toggle-name">Underline names that don't exist</div>
+        <div class="toggle-desc">A dotted red underline under any macro, lookup, index, report or data
+          model that can't be found, so a typo shows before you run the search. A name your role simply
+          can't check is never underlined.</div>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Lookup tools</h2>
+    <p>The largest capability here. Hovering a lookup does more than identify it: on a
+    <code>| lookup</code> clause you get a <b>clause builder</b> that edits the clause and writes
+    it back to your search.</p>
+    <ul>
+      <li><b>Clause builder</b> — change match fields, rename with <code>AS</code>, tick and untick
+        <code>OUTPUT</code> fields, switch <code>OUTPUT</code>/<code>OUTPUTNEW</code>, then
+        <b>Apply to search</b> to rewrite the clause in place.</li>
+      <li><b>Sample explorer</b> — on <code>inputlookup</code> and <code>outputlookup</code>, the
+        lookup's fields alongside a real row from the file.</li>
+      <li><b>Live preview</b> — type a value against a match field to see the row that lookup would
+        actually return, before you commit to the clause.</li>
+      <li><b>Overwrite guard</b> — <code>| outputlookup</code> on a file that already exists warns you,
+        with its current row count and contents. On a new name it simply confirms the file will be
+        created.</li>
+      <li><b>Identification</b> — owning app, whether a definition is CSV- or KV-backed, and edit links
+        for both the definition and its backing file.</li>
+    </ul>
+    <div class="toggle-row">
       <input type="checkbox" id="hoverLookups">
       <label class="toggle-label" for="hoverLookups">
-        <div class="toggle-name">Lookup hover popups</div>
-        <div class="toggle-desc">App resolution, edit links, clause builder and sample explorer for
-          <code>lookup</code> / <code>inputlookup</code> / <code>outputlookup</code> references.</div>
+        <div class="toggle-name">Lookup hover popups &amp; clause builder</div>
+        <div class="toggle-desc">Everything above. Covers <code>lookup</code>, <code>inputlookup</code>
+          and <code>outputlookup</code> references.</div>
       </label>
     </div>
     <div class="toggle-row">
       <input type="checkbox" id="lookupSamples">
       <label class="toggle-label" for="lookupSamples">
         <div class="toggle-name">Sample data &amp; live preview</div>
-        <div class="toggle-desc">Fetches lookup fields and a sample row, and runs preview queries as you
-          type. <b>This is the only feature that dispatches searches</b> (oneshot
-          <code>| inputlookup … | head 1</code>) under your account. Off = passive REST reads only;
-          the builder and explorer are hidden.</div>
-      </label>
-    </div>
-    <div class="toggle-row">
-      <input type="checkbox" id="copyStatHeaders">
-      <label class="toggle-label" for="copyStatHeaders">
-        <div class="toggle-name">Copy icons — Statistics &amp; dashboard tables</div>
-        <div class="toggle-desc">Field-name copy button in sortable results-table headers.</div>
-      </label>
-    </div>
-    <div class="toggle-row">
-      <input type="checkbox" id="copyEventHeaders">
-      <label class="toggle-label" for="copyEventHeaders">
-        <div class="toggle-name">Copy icons — Events table (View: Table)</div>
-        <div class="toggle-desc">Field-name copy button in events-table column headers.</div>
-      </label>
-    </div>
-    <div class="toggle-row">
-      <input type="checkbox" id="copyFieldDialog">
-      <label class="toggle-label" for="copyFieldDialog">
-        <div class="toggle-name">Copy icons — field info dialog</div>
-        <div class="toggle-desc">Copy buttons on the field name and each listed value in the sidebar
-          field popup.</div>
+        <div class="toggle-desc"><b>The only feature that dispatches searches</b> &mdash; oneshot
+          <code>| inputlookup … | head 1</code> under your account, to read a sample row and to preview
+          the values you type. Turn it off for a strictly passive, read-only extension.</div>
       </label>
     </div>
   </div>
 
   <div class="card">
-    <h2>Where copy icons appear</h2>
-    <ul>
-      <li>Statistics tab and dashboard table headers (copies the field name)</li>
-      <li>Events tab, View: Table column headers, including <code>_time</code> (field name)</li>
-      <li>Field info dialog title (field name)</li>
-      <li>Field info dialog values list (copies the raw value, even when the display is truncated)</li>
-      <li>Field chips in lookup hover popups (field name)</li>
-    </ul>
+    <h2>3 · Copying fields and values</h2>
+    <p>Getting a field name or a value out of Splunk Web normally means selecting text
+    precisely. These turn the things you already click into copy targets.</p>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyStatHeaders">
+      <label class="toggle-label" for="copyStatHeaders">
+        <div class="toggle-name">Statistics &amp; dashboard table headers</div>
+        <div class="toggle-desc">Click a column header's field name to copy it.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyEventHeaders">
+      <label class="toggle-label" for="copyEventHeaders">
+        <div class="toggle-name">Events table headers (View: Table)</div>
+        <div class="toggle-desc">Click a column header's field name to copy it, <code>_time</code>
+          included.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyEventActions">
+      <label class="toggle-label" for="copyEventActions">
+        <div class="toggle-name">Cell menus</div>
+        <div class="toggle-desc">Two entries in the menu a results-table or expanded-event cell opens:
+          the value on its own, and <code>field="value"</code> ready to paste into a search.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyDrilldownPair">
+      <label class="toggle-label" for="copyDrilldownPair">
+        <div class="toggle-name">Drilldown popup headline</div>
+        <div class="toggle-desc">In the <code>field = value</code> line at the top of that popup, clicking
+          the field name copies the pair and clicking the value copies the value alone.</div>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyFieldDialog">
+      <label class="toggle-label" for="copyFieldDialog">
+        <div class="toggle-name">Field info dialog</div>
+        <div class="toggle-desc">Copy buttons on the field name and on each listed value &mdash; the raw
+          value, even where the dialog truncates it for display.</div>
+      </label>
+    </div>
     <div class="note">Copied values are raw data from your events and lookups and can include
-      sensitive information (account numbers, personal identifiers). The clipboard is yours —
+      sensitive information (account numbers, personal identifiers). The clipboard is yours &mdash;
       treat pastes accordingly.</div>
+  </div>
+
+  <div class="card">
+    <h2>4 · Copying whole tables</h2>
+    <p>For when the answer is the table itself rather than one value in it.</p>
+    <div class="toggle-row">
+      <input type="checkbox" id="copyTable">
+      <label class="toggle-label" for="copyTable">
+        <div class="toggle-name">Copy table</div>
+        <div class="toggle-desc">Turns the search page's export button into a menu: <b>Export as File</b>
+          (Splunk's own export, unchanged) plus <b>Copy as TSV</b> for spreadsheets and
+          <b>Copy as Markdown</b> for tickets and docs, headers included. Dashboard tables get their own
+          <b>Copy table</b> button. You get the rows in front of you, in their current sort and columns
+          &mdash; not the pages you haven't loaded.</div>
+      </label>
+    </div>
   </div>
 
   <footer>Settings sync with your Chrome profile and apply immediately to open Splunk tabs.</footer>

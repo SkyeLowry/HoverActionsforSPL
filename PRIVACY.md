@@ -35,7 +35,9 @@ icon) and write to your own clipboard only.
   add.
 - Host access is **optional and user-granted**: the extension has no access
   to any website until you add your own Splunk domain on the options page,
-  and it runs only on the domains you have added.
+  and it runs only on the domains you have added. A domain may be written as
+  a wildcard (`*.splunkcloud.com`) to cover several stacks in one grant;
+  Chrome shows you the scope before you approve it.
 
 ## Changes
 
