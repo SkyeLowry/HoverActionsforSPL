@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Hover Actions for SPL",
-  "version": "0.20.0",
-  "description": "Macro and lookup hover popups, a lookup clause builder with live sample preview, and copy-to-clipboard icons across Splunk Web.",
+  "version": "0.20.1",
+  "description": "Hover popups, a lookup clause builder, and one-click copying for Splunk Web. No site access until you add your own domain.",
   "minimum_chrome_version": "102",
   "icons": {
     "16": "icons/icon16.png",

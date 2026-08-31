@@ -112,7 +112,20 @@ fallback chains over changing the primary.
    httpOnly by design. GETs to REST endpoints need no CSRF.
 6. **`inputlookup` accepts definition names as well as filenames** — that's
    how definition sampling (including KV store) works.
-7. **Transforms edit URL** pattern (verified working):
+7. **Saved-search edit URL** (verified working):
+   `/manager/launcher/saved/searches/<name>?action=edit&ns=<app>&uri=<enc(/servicesNS/<owner>/<app>/saved/searches/<name>)>`
+   — the same launcher+ns+uri shape as macros.
+8. **Data model manager URL** (verified working):
+   `/manager/launcher/data/models?search=<name>` — the filtered listing, not
+   an entity edit route. Note this is the MANAGER path; the REST read for a
+   data model is `datamodel/model` (fact 9).
+9. **`datamodel/model/<name>` returns HTTP 500** under the `-/-` namespace on
+   this stack. Read data models collection-first
+   (`datamodel/model?search=<name>`, exact-matched on `entry[].name`), with
+   the entity routes as fallbacks. Its useful content arrives as JSON
+   *strings* inside the entry: `description` holds the datasets and their
+   fields, `acceleration` the summary settings.
+10. **Transforms edit URL** pattern (verified working):
    `/manager/launcher/data/transforms/lookups/<name>?action=edit&uri=<enc(/servicesNS/<owner>/<app>/data/transforms/lookups/<name>)>`.
 
 ## Splunk Web DOM facts
@@ -184,14 +197,10 @@ fallback chains over changing the primary.
   and recovers the layer padding from the `left` Ace hands it. Don't put
   geometry in the `.ssh-bad-token` CSS rule — the div is positioned inline. `outputlookup` targets and names containing
   `$` (macro arguments) are never marked.
-- **Data models**: the entity route `datamodel/model/<name>` returns HTTP 500
-  on some stacks under the `-/-` namespace, so reads go collection-first
-  (`datamodel/model?search=<name>`, exact-matched on `entry[].name`) with the
-  entity routes as fallbacks. It returns the interesting parts as
-  JSON *strings* inside the entry content — `description` holds the datasets
-  and their fields, `acceleration` the summary settings. Both are parsed
-  defensively; a malformed one must not take the popup down. A dataset's
-  fields include the output fields of its calculations, not just `fields`.
+- **Data models**: see verified facts 8 and 9 for the endpoints. Both JSON
+  strings are parsed defensively — a malformed one must not take the popup
+  down — and a dataset's fields include the output fields of its
+  calculations, not just `fields`.
 - **Field info dialog**: name in `h2.field-info-header`; values in
   `table.table-field-values td.value a[data-value]` — `data-value` holds the
   raw (untruncated) value; copy from it, not display text.
@@ -303,6 +312,9 @@ the moment a hover proves the name resolves.
   telemetry, optional user-granted host access. If a change would violate a
   sentence in PRIVACY.md, the change is wrong or PRIVACY.md must be updated
   first — in that order of preference.
+- Store copy lives in `STORE.md` — update it in the same change that adds a
+  feature or a permission, not later. The listing described 0.8 long after
+  the product had moved on.
 - Distribution: `zip -r hover-actions-for-spl.zip <folder>`; `.gitignore`
   already excludes zips. `icons/icon-master.png` is the art source; sizes
   are Lanczos downscales from it.

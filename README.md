@@ -108,6 +108,8 @@ Splunk LLC.
 
 ## Version history
 
+- **0.20.1** — Store listing rewritten (`STORE.md`) and the manifest description
+  brought in step with what the extension actually does.
 - **0.20.0** — Wildcard domains: add `*.splunkcloud.com` once to cover every
   stack under it, instead of one entry per host.
 - **0.19.4** — Options copy describes what each feature does rather than how it
