@@ -90,6 +90,87 @@ This is an independent project. It is not affiliated with, endorsed by, or spons
 
 ---
 
+## Screenshots
+
+### What the store wants
+
+- **1280 × 800** (preferred) or 640 × 400. 24-bit PNG, no alpha.
+- 1 to 5 screenshots. The first one is the one most people see, so it must
+  carry the product on its own.
+- Show the product in use. Avoid pasted-on marketing text.
+- Optional but worth having: small promo tile **440 × 280**.
+
+Exact pixels the easy way: DevTools → device toolbar (Ctrl+Shift+M) →
+Responsive → set 1280 × 800, DPR 1 → Ctrl+Shift+P → "Capture screenshot".
+That crops out the browser chrome, which also keeps your host name out of
+the image.
+
+### Fixture
+
+Never screenshot real event data or a real lookup. Create this as
+`http_status.csv` in the Lookup File Editor (app: search), and a lookup
+definition of the same name:
+
+```csv
+status,status_description,status_type
+200,OK,Successful
+201,Created,Successful
+301,Moved Permanently,Redirection
+304,Not Modified,Redirection
+400,Bad Request,Client Error
+403,Forbidden,Client Error
+404,Not Found,Client Error
+500,Internal Server Error,Server Error
+503,Service Unavailable,Server Error
+```
+
+This search generates a results table from the fixture alone — no index, no
+real events, five clean rows:
+
+```
+| makeresults count=5
+| streamstats count as n
+| eval status=mvindex(split("200,301,403,404,500", ","), n-1)
+| lookup http_status.csv status OUTPUT status_description, status_type
+| table status status_description status_type
+```
+
+For the macro shot, create a macro `http_class(1)` with definition
+`search status_type="$class$"` and argument `class`.
+
+### Shot list
+
+Ordered. Take all six, ship the best five.
+
+1. **The clause builder.** Hover `| lookup http_status.csv status OUTPUT
+   status_description, status_type` with the builder open: match row, output
+   fields ticked, sample values beside each. This is the one capability
+   nobody else has, so it leads.
+2. **Live preview.** Same popup with a value typed into "try a value…" and
+   the Sample column showing the matching row. Shows the builder is live, not
+   a form.
+3. **Macro with arguments.** Hover `` `http_class("Client Error")` `` so the
+   definition shows the substituted value highlighted.
+4. **A typo caught before running.** A mistyped index with the dotted red
+   underline, popup open saying it doesn't exist. The clearest "oh, useful"
+   in one frame. Invent the name — `index=web_prd` for a stack that has no
+   such index — rather than typo'ing one of your real ones, or the real name
+   is legible in the frame.
+5. **Copy the table.** The export button's menu open over the fixture results
+   table, showing Export as File / Copy as TSV / Copy as Markdown.
+6. **The options page.** Scrolled to show the four groups and the domain
+   list. Reassures anyone reading the permission model — reviewers included.
+
+### Before you capture
+
+- One Splunk theme throughout; don't mix light and dark across the set.
+- Sign in as a user whose name isn't identifying, or crop the account menu.
+- No real host name, index name, app name or lookup name anywhere in frame.
+- Close other extensions' toolbars and any notification banners.
+- Browser zoom at 100%, or the popup's proportions will look wrong.
+
+---
+
 ## Notes for whoever updates this
 
 - Screenshots use the `http_status.csv` fixture — never a real lookup, never
